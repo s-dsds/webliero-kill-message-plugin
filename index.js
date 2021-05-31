@@ -67,18 +67,8 @@ var DOUBLEKILL_PLUGIN = (function () {
         if (typeof timeouts[k.id] != 'undefined') {
           clearTimeout(timeouts[k.id]);
         }
-  
-        timeouts[k.id] = setTimeout(() => {
-          const cnt = (typeof buffers[k.id] == 'undefined') ? 0 : buffers[k.id].filter(e => (e.time - now) <= settings.window_length).length;
-          console.log("cnt", cnt);
-          if (cnt > 1) {
-            const key = getKey(cnt);
-            room.sendAnnouncement(settings[key + '_msg'], null, settings[key + '_color'], 'italic bold', 1)
-          }
-          clearTimeout(timeouts[k.id]);
-          delete (timeouts[k.id]);
-          delete (buffers[k.id]);
-        }, settings.window_length);
+
+        timeouts[k.id] = setTimeout(clearBuffer, settings.window_length);
       }
       if (typeof k != 'undefined' && k != null && k.id != l.id) {
         buffers[k.id].push({ killed: k.id, time: now });
@@ -86,7 +76,23 @@ var DOUBLEKILL_PLUGIN = (function () {
     } catch (error) {
       console.log("error on double kill script", error);
     }
-    
+
+  }
+
+  const clearBuffer = () => {
+    try {
+      const cnt = (typeof buffers[k.id] == 'undefined') ? 0 : buffers[k.id].filter(e => (e.time - now) <= settings.window_length).length;
+      console.log("cnt", cnt);
+      if (cnt > 1) {
+        const key = getKey(cnt);
+        room.sendAnnouncement(settings[key + '_msg'], null, settings[key + '_color'], 'italic bold', 1)
+      }
+      clearTimeout(timeouts[k.id]);
+      delete (timeouts[k.id]);
+      delete (buffers[k.id]);
+    } catch (error) {
+      console.log("error clearing double kill buffer", error);
+    }
   }
 
 
