@@ -56,7 +56,6 @@ var DOUBLEKILL_PLUGIN = (function () {
   }
 
   const onPlayerKilled = (l, k) => {
-    console.log("k", k);
     const now = Date.now();
     if (typeof k == 'undefined' || k == null) {
       return;
@@ -82,7 +81,6 @@ var DOUBLEKILL_PLUGIN = (function () {
   const clearBuffer = () => {
     try {
       const cnt = (typeof buffers[k.id] == 'undefined') ? 0 : buffers[k.id].filter(e => (e.time - now) <= settings.window_length).length;
-      console.log("cnt", cnt);
       if (cnt > 1) {
         const key = getKey(cnt);
         room.sendAnnouncement(settings[key + '_msg'], null, settings[key + '_color'], 'italic bold', 1)
